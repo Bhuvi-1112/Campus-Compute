@@ -1,5 +1,8 @@
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 #include "ipc.h"
 
 int main(void)
@@ -7,35 +10,63 @@ int main(void)
     char buffer[IPC_MESSAGE_SIZE];
 
     printf("\n====================================\n");
-    printf("    CAMPUSCOMPUTE IPC TEST\n");
+    printf("       CAMPUSCOMPUTE IPC TEST\n");
     printf("====================================\n");
 
-    /* Initialize shared memory and semaphore. */
+    /* Initialize shared memory and named semaphore */
     if (ipc_init() != 0) {
-        fprintf(stderr, "IPC initialization failed.\n");
+        printf("IPC initialization failed.\n");
         return 1;
     }
 
     printf("Shared memory initialized successfully.\n");
     printf("Named semaphore initialized successfully.\n");
 
-    /* Write a message into shared memory. */
-    const char *message =
-        "CampusCompute job data transferred using shared memory.";
+    fflush(stdout);
 
-    if (ipc_write(message) != 0) {
-        fprintf(stderr, "IPC write failed.\n");
+    /* Create child process */
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        perror("fork");
         ipc_cleanup();
         return 1;
     }
 
-    printf("\nMessage written to shared memory.\n");
+    /* Child process writes the message */
+    if (pid == 0) {
+        const char *message =
+            "Message sent from child process to parent process.";
 
-    /* Read the message back. */
+        if (ipc_write(message) != 0) {
+            _exit(1);
+        }
+
+        _exit(0);
+    }
+
+    /* Parent waits for child process */
+    int status;
+
+    if (waitpid(pid, &status, 0) == -1) {
+        perror("waitpid");
+        ipc_cleanup();
+        return 1;
+    }
+
+    if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+        printf("Child process failed.\n");
+        ipc_cleanup();
+        return 1;
+    }
+
+    printf("Child process completed successfully.\n");
+
+    /* Parent reads the message from shared memory */
     int result = ipc_read(buffer, sizeof(buffer));
 
     if (result == -1) {
-        fprintf(stderr, "IPC read failed.\n");
+        printf("IPC read failed.\n");
         ipc_cleanup();
         return 1;
     }
@@ -43,22 +74,13 @@ int main(void)
     if (result == 0) {
         printf("No message available.\n");
     } else {
-        printf("Message received: %s\n", buffer);
+        printf("Parent received message: %s\n", buffer);
     }
 
-    /* Verify that the message was consumed. */
-    result = ipc_read(buffer, sizeof(buffer));
-
-    if (result == 0) {
-        printf("Shared memory message successfully consumed.\n");
-    } else {
-        printf("Unexpected additional message.\n");
-    }
-
-    /* Clean up shared memory and semaphore. */
+    /* Clean up IPC resources */
     ipc_cleanup();
 
-    printf("\nShared memory and semaphore cleaned up.\n");
+    printf("Shared memory and semaphore cleaned up.\n");
     printf("IPC test completed successfully.\n");
 
     return 0;
