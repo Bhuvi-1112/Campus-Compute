@@ -1,0 +1,24 @@
+
+====================================
+   CAMPUSCOMPUTE LOGGER TEST
+====================================
+[LOGGER] Job event 1: Job processed successfully
+[LOGGER] Job event 2: Job processed successfully
+[LOGGER] Job event 3: Job processed successfully
+[LOGGER] Job event 4: Job processed successfully
+[LOGGER] Job event 5: Job processed successfully
+[LOGGER] Job event 6: Job processed successfully
+[LOGGER] Job event 7: Job processed successfully
+[LOGGER] Job event 8: Job processed successfully
+[LOGGER] Job event 9: Job processed successfully
+[LOGGER] Job event 10: Job processed successfully
+[LOGGER] Job event 11: Job processed successfully
+[LOGGER] Job event 12: Job processed successfully
+[LOGGER] Job event 13: Job processed successfully
+[LOGGER] Job event 14: Job processed successfully
+[LOGGER] Job event 15: Job processed successfully
+[LOGGER] Consumer thread terminated.
+
+All log messages processed successfully.
+Producer and consumer threads terminated.
+Logger resources cleaned up.
