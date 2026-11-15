@@ -1,5 +1,9 @@
 
 # CampusCompute
+### Team Details
+Member 1 SRN: PES1UG26CS811 [Bhuvana H ]
+Member 2 SRN: PES1UG26CS846 [Seema Nagendra Haragapuri ]
+
 ## Intelligent Job Scheduling and Resource Management
 
 ### Project Overview
@@ -85,10 +89,6 @@ Run:
 
 ### Clean Build Files
     make clean
-
-### Team Details
-Student SRN: PES1UG26CS811
-Team Member SRN: PES1UG26CS846
 
 ### Note
 Worker failure is simulated intentionally for testing.
